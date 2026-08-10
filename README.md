@@ -114,25 +114,33 @@ curl -X POST http://localhost:1337/v1/graphql \
 npx vitest run
 ```
 
-## Project Structure
+## 📂 Project Structure
 
-```
-├── nhost/
-│   ├── migrations/default/0001_initial_schema/   # SQL schema
-│   └── seeds/default/                            # Test data
-├── functions/
-│   ├── _utils/              # Shared: GraphQL client, error helpers
-│   ├── _repositories/       # Data access layer (Hasura GraphQL)
-│   ├── _services/           # Business logic layer
-│   │   └── step-handlers/   # One handler per step type
-│   ├── trigger-workflow-run.ts   # Hasura Action controller
-│   ├── approve-step.ts           # Hasura Action controller
-│   ├── webhook-trigger.ts        # Hasura Action controller
-│   └── notify-event.ts           # Event Trigger handler
-├── package.json
-├── .env.example
-└── README.md
-```
+This repository follows a monorepo structure containing the Nhost backend, serverless functions, and the Next.js frontend:
+
+- 📁 **`nhost/`** — Backend configuration (PostgreSQL, Hasura, Auth)
+  - 📁 `migrations/default/` — SQL schema (tables, views, etc.)
+  - 📁 `metadata/` — Hasura metadata (relationships, permissions, actions, event triggers)
+  - 📁 `seeds/default/` — Test data for local development
+- 📁 **`functions/`** — Nhost Serverless Functions (Node.js)
+  - 📁 `_utils/` — Shared utilities (GraphQL clients, error helpers)
+  - 📁 `_repositories/` — Data access layer interfacing with Hasura GraphQL
+  - 📁 `_services/` — Core business logic & Layer 2 step-level permissions
+    - 📁 `step-handlers/` — Handlers for `llm_call`, `http_request`, `db_write`, etc.
+  - 📄 `trigger-workflow-run.ts` — Hasura Action to execute workflows
+  - 📄 `approve-step.ts` — Hasura Action to resume paused approval gates
+  - 📄 `webhook-trigger.ts` — Hasura Action for inbound webhooks
+  - 📄 `notify-event.ts` — Event Trigger for `notify` steps
+- 📁 **`frontend/`** — Next.js React Web Application
+  - 📁 `src/app/` — Next.js App Router (Workflow builder, Run UI, Quota indicators)
+  - 📁 `src/components/` — UI components and forms
+  - 📁 `src/lib/` — Nhost client and shared utilities
+- 📁 **`docs/`** — Documentation and Write-ups
+  - 📄 `architecture.md` — Write-up on schema, permissions, and architecture
+  - 🎥 `demo.mp4` — Final Task scenario recording
+- 📄 **`package.json`** — Root dependencies and monorepo scripts
+- 📄 **`.env.example`** — Environment variables template
+- 📄 **`README.md`** — Project documentation and setup guide
 
 ## Architecture
 
