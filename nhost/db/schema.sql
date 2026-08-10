@@ -78,9 +78,6 @@ CREATE TABLE step_runs (
   created_at    TIMESTAMPTZ     NOT NULL DEFAULT now()
 );
 
--- ponytail: FK indexes — add when queries slow down
--- ponytail: updated_at — add when frontend needs "last edited" display
-
 -- Aggregation (required by assignment: org-level usage this month)
 CREATE VIEW org_monthly_usage AS
 SELECT
