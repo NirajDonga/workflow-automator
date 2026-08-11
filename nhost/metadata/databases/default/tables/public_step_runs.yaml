@@ -1,0 +1,36 @@
+table:
+  schema: public
+  name: step_runs
+object_relationships:
+  - name: workflow_run
+    using:
+      foreign_key_constraint_on: run_id
+  - name: workflow_step
+    using:
+      foreign_key_constraint_on: step_id
+  - name: approved_by_user
+    using:
+      foreign_key_constraint_on: approved_by
+select_permissions:
+  - role: user
+    permission:
+      columns: [id, run_id, step_id, status, input, output, error, attempt_count, approved_by, approved_at, created_at]
+      filter:
+        workflow_run:
+          workflow:
+            organization:
+              org_members:
+                user_id:
+                  _eq: X-Hasura-User-Id
+event_triggers:
+  - name: notify_step_event
+    definition:
+      enable_manual: false
+      update:
+        columns:
+          - status
+    retry_conf:
+      num_retries: 3
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: "{{NHOST_BACKEND_URL}}/v1/functions/notify-event"

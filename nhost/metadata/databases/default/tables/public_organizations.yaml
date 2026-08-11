@@ -1,0 +1,35 @@
+table:
+  schema: public
+  name: organizations
+array_relationships:
+  - name: org_members
+    using:
+      foreign_key_constraint_on:
+        column: org_id
+        table:
+          schema: public
+          name: org_members
+  - name: workflows
+    using:
+      foreign_key_constraint_on:
+        column: org_id
+        table:
+          schema: public
+          name: workflows
+object_relationships:
+  - name: monthly_usage
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: org_monthly_usage
+        column_mapping:
+          id: org_id
+select_permissions:
+  - role: user
+    permission:
+      columns: [id, name, quota_limit, quota_used, created_at]
+      filter:
+        org_members:
+          user_id:
+            _eq: X-Hasura-User-Id
