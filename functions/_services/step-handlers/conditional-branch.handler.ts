@@ -3,8 +3,8 @@ import { IStepHandler, IStepContext, StepResult } from './types';
 export class ConditionalBranchHandler implements IStepHandler {
   async execute(ctx: IStepContext): Promise<StepResult> {
     const { field, operator, value } = ctx.config as {
-      field: string;   // key in previous_output to check
-      operator: string; // 'eq', 'neq', 'contains', 'gt', 'lt'
+      field: string;
+      operator: string;
       value: unknown;
     };
 
