@@ -8,7 +8,6 @@ export class DbWriteHandler implements IStepHandler {
       variables?: Record<string, unknown>;
     };
 
-    // Merge previous output into variables so mutations can reference prior step data
     const merged = { ...ctx.previous_output, ...variables };
     const data = await adminQuery(mutation, merged);
     return { status: 'success', output: data as Record<string, unknown> };

@@ -51,6 +51,7 @@ export async function updateStepRun(
   stepRunId: string,
   update: {
     status: StepRunStatus;
+    input?: Record<string, unknown> | null;
     output?: Record<string, unknown>;
     error?: string;
     attempt_count?: number;
@@ -80,4 +81,30 @@ export async function getStepRun(stepRunId: string): Promise<StepRun> {
   );
   if (!data.step_runs_by_pk) throw new Error(`StepRun ${stepRunId} not found`);
   return data.step_runs_by_pk;
+}
+
+export async function getWorkflowRun(runId: string): Promise<{ id: string; workflow_id: string; status: RunStatus }> {
+  const data = await adminQuery<{
+    workflow_runs_by_pk: { id: string; workflow_id: string; status: RunStatus } | null;
+  }>(
+    `query($id: uuid!) {
+      workflow_runs_by_pk(id: $id) { id, workflow_id, status }
+    }`,
+    { id: runId },
+  );
+  if (!data.workflow_runs_by_pk) throw new Error(`Run ${runId} not found`);
+  return data.workflow_runs_by_pk;
+}
+
+export async function getStepRunsByRunId(runId: string): Promise<StepRun[]> {
+  const data = await adminQuery<{ step_runs: StepRun[] }>(
+    `query($runId: uuid!) {
+      step_runs(where: { run_id: { _eq: $runId } }, order_by: { workflow_step: { order_index: asc } }) {
+        id run_id step_id status input output error attempt_count
+        approved_by approved_at created_at
+      }
+    }`,
+    { runId },
+  );
+  return data.step_runs;
 }
