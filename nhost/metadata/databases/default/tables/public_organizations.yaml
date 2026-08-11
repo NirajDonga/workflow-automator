@@ -33,3 +33,19 @@ select_permissions:
         org_members:
           user_id:
             _eq: X-Hasura-User-Id
+event_triggers:
+  - name: org_change_trigger
+    definition:
+      enable_manual: false
+      insert:
+        columns: "*"
+      update:
+        columns:
+          - name
+          - quota_limit
+    retry_conf:
+      num_retries: 1
+      interval_sec: 10
+      timeout_sec: 60
+    webhook: "{{NHOST_BACKEND_URL}}/v1/functions/database-event-trigger"
+
